@@ -275,28 +275,25 @@ public class ExploredGraph {
         // Additional explanation of what to do here will be given in GoPost or
         // as extra text in the spec.
         @SuppressWarnings("rawtypes")
-        Function getPrecondition() {
-            return new Function() {
+        Function<Vertex, Boolean> getPrecondition() {
+            return new Function<Vertex, Boolean>() {
                 @Override
-                public Object apply(Object vertex) {
-                    if (vertex instanceof Vertex) {
-                        int diskMoving = ((Vertex) vertex).pegs[i].peek();
-                        int topDisk = ((Vertex) vertex).pegs[j].peek();
-                        return diskMoving < topDisk;
-                    } else {
-                        return false;
-                    }
+                public Boolean apply(Vertex vertex) {
+                    int diskMoving = vertex.pegs[i].peek();
+                    int topDisk = vertex.pegs[j].peek();
+                    return diskMoving < topDisk;
                 }
             };
         }
 
         @SuppressWarnings("rawtypes")
-        Function getTransition() {
-            return new Function() {
+        Function<Vertex, Vertex> getTransition() {
+            return new Function<Vertex, Vertex>() {
                 @Override
-                public Object apply(Object vertex) {
-                    int diskMoving = ((Vertex) vertex).pegs[i].pop();
-                    return ((Vertex) vertex).pegs[j].push(diskMoving);
+                public Vertex apply(Vertex vertex) {
+                    int diskMoving = vertex.pegs[i].pop();
+                    vertex.pegs[j].push(diskMoving);
+                    return vertex;
                 }
             };
         }
