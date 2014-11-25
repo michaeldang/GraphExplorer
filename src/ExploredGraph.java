@@ -145,7 +145,6 @@ public class ExploredGraph {
     public ArrayList<Vertex> shortestPath(Vertex vi, Vertex vj) {
         // TODO: return a shortest path as an array list
         bfs(vi, vj);
-
         ArrayList<Vertex> path = retrievePath(vj);
         return path;
     }
