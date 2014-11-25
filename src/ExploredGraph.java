@@ -86,10 +86,12 @@ public class ExploredGraph {
                 Operator currOperator = operators.get(currOperatorIndex);
                 if (currOperator.getPrecondition().apply(currVertex)) {
                     Vertex newVertex = currOperator.getTransition().apply(currVertex);
-                    Ve.add(newVertex);
-                    VeSize++;
-                    addNewEdge(currVertex, newVertex);
-                    foundSolution = dfsHelper(newVertex, vj);
+                    if (!Ve.contains(newVertex)) {
+                        Ve.add(newVertex);
+                        VeSize++;
+                        addNewEdge(currVertex, newVertex);
+                        foundSolution = dfsHelper(newVertex, vj);
+                    }
                 }
             }
             return foundSolution;
@@ -116,11 +118,13 @@ public class ExploredGraph {
                 Operator currOperator = operators.get(currOperatorIndex);
                 if (currOperator.getPrecondition().apply(currVertex)) {
                     Vertex newVertex = currOperator.getTransition().apply(currVertex);
-                    addNewEdge(currVertex, newVertex);
-                    if (newVertex.equals(vj)) {
-                        reachedEnd = true;
-                    } else {
-                        verticesToExplore.add(newVertex);
+                    if (!Ve.contains(newVertex)) {
+                        addNewEdge(currVertex, newVertex);
+                        if (newVertex.equals(vj)) {
+                            reachedEnd = true;
+                        } else {
+                            verticesToExplore.add(newVertex);
+                        }
                     }
                 }
             }
