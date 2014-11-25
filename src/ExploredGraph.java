@@ -72,6 +72,26 @@ public class ExploredGraph {
         // implement depth first search algorithm
         // Hints: Choose the right data structure between queue and stack
         // You may need a private method to do the recursion if you need
+        initialize();
+        dfsHelper(vi, vj);
+    }
+
+    private boolean dfsHelper(Vertex currVertex, Vertex vj) {
+        boolean foundSolution = false;
+        if (currVertex != vj) {
+            for (int currOperatorIndex = 0; currOperatorIndex < operators.size() && !foundSolution; currOperatorIndex++) {
+                Operator currOperator = operators.get(currOperatorIndex);
+                if ((boolean)currOperator.getPrecondition().apply(currVertex)) {
+                    Vertex vertexToAdd = (Vertex)currOperator.getTransition().apply(currVertex);
+                    Ee.add(new Edge(currVertex, vertexToAdd));
+                    EeSize++;
+                    foundSolution = dfsHelper(vertexToAdd, vj);
+                }
+            }
+            return foundSolution;
+        } else {
+            return true;
+        }
     }
 
     public void bfs(Vertex vi, Vertex vj) {
@@ -79,6 +99,28 @@ public class ExploredGraph {
         // implement breath first search algorithm
         // Hints: Choose the right data structure between queue and stack
         // You may need a private method to do the recursion if you need
+        initialize();
+        Queue<Vertex> verticesToExplore = new LinkedList<Vertex>();
+        verticesToExplore.add(vi);
+        boolean reachedEnd = false;
+        for (int numVertices = verticesToExplore.size(); numVertices > 0 && !reachedEnd; numVertices--) {
+            Vertex currVertex = verticesToExplore.remove();
+            Ve.add(currVertex);
+            VeSize++;
+            for (int currOperatorIndex = 0; currOperatorIndex < operators.size() && !reachedEnd; currOperatorIndex++) {
+                Operator currOperator = operators.get(currOperatorIndex);
+                if ((boolean)currOperator.getPrecondition().apply(currVertex)) {
+                    Vertex vertexToAdd = (Vertex)currOperator.getTransition().apply(currVertex);
+                    Ee.add(new Edge(currVertex, vertexToAdd));
+                    EeSize++;
+                    if (vertexToAdd.equals(vj)) {
+                        reachedEnd = true;
+                    } else {
+                        verticesToExplore.add(vertexToAdd);
+                    }
+                }
+            }
+        }
     }
 
     public ArrayList<Vertex> retrievePath(Vertex vj) {
@@ -90,6 +132,8 @@ public class ExploredGraph {
 
     public ArrayList<Vertex> shortestPath(Vertex vi, Vertex vj) {
         // TODO: return a shortest path as an array list
+        bfs(vi, vj);
+
         ArrayList<Vertex> path = retrievePath(vj);
         return path;
     }
@@ -170,7 +214,7 @@ public class ExploredGraph {
                 Stack<Integer> tempPeg = new Stack<Integer>();
                 while (!pegs[pegIndex].isEmpty()) {
                     int temp = pegs[pegIndex].pop();
-                    hashCode += temp * temp;
+                    hashCode += temp * pegIndex;
                     tempPeg.push(temp);
                 }
                 while (!tempPeg.isEmpty()) {
@@ -221,26 +265,27 @@ public class ExploredGraph {
         // as extra text in the spec.
         @SuppressWarnings("rawtypes")
         Function getPrecondition() {
-            // TODO: return a function that can be applied to a vertex (provided
-            // that the precondition is true) to get a "successor" vertex -- the
-            // result of making the move.
             return new Function() {
                 @Override
                 public Object apply(Object vertex) {
-                    return false;
+                    if (vertex instanceof Vertex) {
+                        int diskMoving = ((Vertex) vertex).pegs[i].peek();
+                        int topDisk = ((Vertex) vertex).pegs[j].peek();
+                        return diskMoving < topDisk;
+                    } else {
+                        return false;
+                    }
                 }
             };
         }
 
         @SuppressWarnings("rawtypes")
         Function getTransition() {
-            // TODO: should return a function that can be applied to a vertex
-            // (provided that the precondition is true) to get a "successor"
-            // vertex -- the result of making the move.
             return new Function() {
                 @Override
                 public Object apply(Object vertex) {
-                    return null;
+                    int diskMoving = ((Vertex) vertex).pegs[i].pop();
+                    return ((Vertex) vertex).pegs[j].push(diskMoving);
                 }
             };
         }
@@ -248,7 +293,7 @@ public class ExploredGraph {
         public String toString() {
             // TODO: return a string good enough
             // to distinguish different operators
-            return "";
+            return i + " -> " + j;
         }
     }
 
