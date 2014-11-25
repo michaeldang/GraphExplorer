@@ -164,6 +164,13 @@ public class ExploredGraph {
 
     public static void main(String[] args) {
         ExploredGraph eg = new ExploredGraph();
+        Vertex v0 = eg.new Vertex("[[4,3,2,1],[],[]]");
+        System.out.println(v0);
+        Vertex v1 = eg.new Vertex("[[4,2],[3],[1]]");
+        ArrayList<Vertex> answerPath = eg.shortestPath(v0, v1);
+        for (Vertex vertex: answerPath) {
+            System.out.println(vertex);
+        }
         // Test the vertex constructor:
         // Vertex v0 = eg.new Vertex("[[4,3,2,1],[],[]]");
         // System.out.println(v0);
@@ -202,6 +209,13 @@ public class ExploredGraph {
                 }
             }
         }
+        
+        public Vertex(Vertex vertex) {
+            pegs = new Stack[vertex.pegs.length];
+            for (int index = 0; index < vertex.pegs.length; index++) {
+                pegs[index] = (Stack<Integer>) vertex.pegs[index].clone();
+            }
+        }
 
         public String toString() {
             String ans = "[";
@@ -214,7 +228,7 @@ public class ExploredGraph {
             ans += "]";
             return ans;
         }
-
+        
         @Override
         public boolean equals(Object v) {
             if (v instanceof Vertex)
@@ -239,7 +253,6 @@ public class ExploredGraph {
             }
             return hashCode;
         }
-
     }
 
     class Edge {
@@ -284,10 +297,14 @@ public class ExploredGraph {
             return new Function<Vertex, Boolean>() {
                 @Override
                 public Boolean apply(Vertex vertex) {
-                    int diskMoving = vertex.pegs[i].peek();
-                    Stack<Integer> pegToPlaceOn = vertex.pegs[j];
-                    int topDisk = (pegToPlaceOn.empty()) ? 0 : pegToPlaceOn.peek();
-                    return diskMoving < topDisk;
+                    Stack<Integer> currPeg = vertex.pegs[i];
+                    if (!currPeg.empty()) {
+                        int diskMoving = currPeg.peek();
+                        Stack<Integer> pegToPlaceOn = vertex.pegs[j];
+                        int topDisk = pegToPlaceOn.empty() ? diskMoving + 1 : pegToPlaceOn.peek();
+                        return diskMoving < topDisk;
+                    }
+                    return false;
                 }
             };
         }
@@ -297,6 +314,7 @@ public class ExploredGraph {
             return new Function<Vertex, Vertex>() {
                 @Override
                 public Vertex apply(Vertex vertex) {
+                    vertex = new Vertex(vertex);
                     int diskMoving = vertex.pegs[i].pop();
                     vertex.pegs[j].push(diskMoving);
                     return vertex;
