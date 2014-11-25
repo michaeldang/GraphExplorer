@@ -240,19 +240,7 @@ public class ExploredGraph {
 
         @Override
         public int hashCode() {
-            int hashCode = 0;
-            for (int pegIndex = 0; pegIndex < pegs.length; pegIndex++) {
-                Stack<Integer> tempPeg = new Stack<Integer>();
-                while (!pegs[pegIndex].isEmpty()) {
-                    int temp = pegs[pegIndex].pop();
-                    hashCode += temp * pegIndex;
-                    tempPeg.push(temp);
-                }
-                while (!tempPeg.isEmpty()) {
-                    pegs[pegIndex].push(tempPeg.pop());
-                }
-            }
-            return hashCode;
+            return toString().hashCode();
         }
     }
 
