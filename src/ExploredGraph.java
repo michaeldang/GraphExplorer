@@ -75,6 +75,7 @@ public class ExploredGraph {
         // Hints: Choose the right data structure between queue and stack
         // You may need a private method to do the recursion if you need
         initialize();
+        map.put(vi, new LinkedList<Edge>());
         dfsHelper(vi, vj);
     }
 
@@ -105,6 +106,7 @@ public class ExploredGraph {
         initialize();
         Queue<Vertex> verticesToExplore = new LinkedList<Vertex>();
         verticesToExplore.add(vi);
+        map.put(vi, new LinkedList<Edge>());
         boolean reachedEnd = false;
         for (int numVertices = verticesToExplore.size(); numVertices > 0 && !reachedEnd; numVertices--) {
             Vertex currVertex = verticesToExplore.remove();
