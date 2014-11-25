@@ -49,19 +49,22 @@ public class ExploredGraph {
     }
 
     private void setOperators() {
-        // TODO: Initialize the field operators with 6 Operators:
         // (i, j) = {(0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1)}
         operators = new ArrayList<Operator>();
+        operators.add(new Operator(0, 1));
+        operators.add(new Operator(0, 2));
+        operators.add(new Operator(1, 0));
+        operators.add(new Operator(1, 2));
+        operators.add(new Operator(2, 0));
+        operators.add(new Operator(2, 1));
     }
 
     public int nvertices() {
-        // TODO: Return size of collection of explored vertices
-        return 0;
+        return VeSize;
     }
 
     public int nedges() {
-        // TODO: Return size of collection of explored edges
-        return 0;
+        return EeSize;
     }
 
     public void dfs(Vertex vi, Vertex vj) {
@@ -154,15 +157,27 @@ public class ExploredGraph {
 
         @Override
         public boolean equals(Object v) {
-            // TODO: Implement equals method by using hashCode
-            return false;
+            if (v instanceof Vertex)
+                return hashCode() == ((Vertex) v).hashCode();
+            else
+                return false;
         }
 
         @Override
         public int hashCode() {
-            // TODO: Implement a good hashCode
-            // to avoid duplicated hashCodes for different vertexes
-            return 0;
+            int hashCode = 0;
+            for (int pegIndex = 0; pegIndex < pegs.length; pegIndex++) {
+                Stack<Integer> tempPeg = new Stack<Integer>();
+                while (!pegs[pegIndex].isEmpty()) {
+                    int temp = pegs[pegIndex].pop();
+                    hashCode += temp * temp;
+                    tempPeg.push(temp);
+                }
+                while (!tempPeg.isEmpty()) {
+                    pegs[pegIndex].push(tempPeg.pop());
+                }
+            }
+            return hashCode;
         }
 
     }
@@ -177,21 +192,20 @@ public class ExploredGraph {
         }
 
         public String toString() {
-            // TODO: return a String like "vi -> vj"
-            return null;
+            return vi + " -> " + vj;
         }
 
         @Override
         public boolean equals(Object e) {
-            // TODO: Implement equals method by using hashCode
-            return false;
+            if (e instanceof Edge)
+                return hashCode() == ((Edge) e).hashCode();
+            else
+                return false;
         }
 
         @Override
         public int hashCode() {
-            // TODO: Implement a good hashCode
-            // to avoid duplicated hashCodes for different edges
-            return 0;
+            return vi.hashCode() * vi.hashCode() + vj.hashCode();
         }
     }
 
