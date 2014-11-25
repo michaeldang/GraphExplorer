@@ -283,7 +283,8 @@ public class ExploredGraph {
                 @Override
                 public Boolean apply(Vertex vertex) {
                     int diskMoving = vertex.pegs[i].peek();
-                    int topDisk = vertex.pegs[j].peek();
+                    Stack<Integer> pegToPlaceOn = vertex.pegs[j];
+                    int topDisk = (pegToPlaceOn.empty()) ? 0 : pegToPlaceOn.peek();
                     return diskMoving < topDisk;
                 }
             };
