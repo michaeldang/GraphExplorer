@@ -110,7 +110,7 @@ public class ExploredGraph {
         verticesToExplore.add(vi);
         map.put(vi, new LinkedList<Edge>());
         boolean reachedEnd = false;
-        for (int numVertices = verticesToExplore.size(); numVertices > 0 && !reachedEnd; numVertices--) {
+        while (!(verticesToExplore.isEmpty() || reachedEnd)) {
             Vertex currVertex = verticesToExplore.remove();
             Ve.add(currVertex);
             VeSize++;
@@ -128,7 +128,6 @@ public class ExploredGraph {
                     }
                 }
             }
-            numVertices = verticesToExplore.size();
         }
     }
 
