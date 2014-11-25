@@ -124,6 +124,7 @@ public class ExploredGraph {
                     }
                 }
             }
+            numVertices = verticesToExplore.size();
         }
     }
 
