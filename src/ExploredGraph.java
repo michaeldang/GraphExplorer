@@ -83,8 +83,15 @@ public class ExploredGraph {
                 Operator currOperator = operators.get(currOperatorIndex);
                 if ((boolean)currOperator.getPrecondition().apply(currVertex)) {
                     Vertex vertexToAdd = (Vertex)currOperator.getTransition().apply(currVertex);
-                    Ee.add(new Edge(currVertex, vertexToAdd));
+                    Ve.add(vertexToAdd);
+                    VeSize++;
+                    Edge newEdge = new Edge(currVertex, vertexToAdd);
+                    Ee.add(newEdge);
                     EeSize++;
+                    if (!map.containsKey(currVertex)) {
+                        map.put(currVertex, new LinkedList<Edge>());
+                    }
+                    map.get(currVertex).add(newEdge);
                     foundSolution = dfsHelper(vertexToAdd, vj);
                 }
             }
@@ -111,8 +118,13 @@ public class ExploredGraph {
                 Operator currOperator = operators.get(currOperatorIndex);
                 if ((boolean)currOperator.getPrecondition().apply(currVertex)) {
                     Vertex vertexToAdd = (Vertex)currOperator.getTransition().apply(currVertex);
-                    Ee.add(new Edge(currVertex, vertexToAdd));
+                    Edge newEdge = new Edge(currVertex, vertexToAdd);
+                    Ee.add(newEdge);
                     EeSize++;
+                    if (!map.containsKey(currVertex)) {
+                        map.put(currVertex, new LinkedList<Edge>());
+                    }
+                    map.get(currVertex).add(newEdge);
                     if (vertexToAdd.equals(vj)) {
                         reachedEnd = true;
                     } else {
