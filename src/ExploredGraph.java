@@ -1,3 +1,5 @@
+import sun.awt.image.ImageWatched;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -81,18 +83,12 @@ public class ExploredGraph {
         if (currVertex != vj) {
             for (int currOperatorIndex = 0; currOperatorIndex < operators.size() && !foundSolution; currOperatorIndex++) {
                 Operator currOperator = operators.get(currOperatorIndex);
-                if ((boolean)currOperator.getPrecondition().apply(currVertex)) {
-                    Vertex vertexToAdd = (Vertex)currOperator.getTransition().apply(currVertex);
-                    Ve.add(vertexToAdd);
+                if (currOperator.getPrecondition().apply(currVertex)) {
+                    Vertex newVertex = currOperator.getTransition().apply(currVertex);
+                    Ve.add(newVertex);
                     VeSize++;
-                    Edge newEdge = new Edge(currVertex, vertexToAdd);
-                    Ee.add(newEdge);
-                    EeSize++;
-                    if (!map.containsKey(currVertex)) {
-                        map.put(currVertex, new LinkedList<Edge>());
-                    }
-                    map.get(currVertex).add(newEdge);
-                    foundSolution = dfsHelper(vertexToAdd, vj);
+                    addNewEdge(currVertex, newVertex);
+                    foundSolution = dfsHelper(newVertex, vj);
                 }
             }
             return foundSolution;
@@ -116,29 +112,36 @@ public class ExploredGraph {
             VeSize++;
             for (int currOperatorIndex = 0; currOperatorIndex < operators.size() && !reachedEnd; currOperatorIndex++) {
                 Operator currOperator = operators.get(currOperatorIndex);
-                if ((boolean)currOperator.getPrecondition().apply(currVertex)) {
-                    Vertex vertexToAdd = (Vertex)currOperator.getTransition().apply(currVertex);
-                    Edge newEdge = new Edge(currVertex, vertexToAdd);
-                    Ee.add(newEdge);
-                    EeSize++;
-                    if (!map.containsKey(currVertex)) {
-                        map.put(currVertex, new LinkedList<Edge>());
-                    }
-                    map.get(currVertex).add(newEdge);
-                    if (vertexToAdd.equals(vj)) {
+                if (currOperator.getPrecondition().apply(currVertex)) {
+                    Vertex newVertex = currOperator.getTransition().apply(currVertex);
+                    addNewEdge(currVertex, newVertex);
+                    if (newVertex.equals(vj)) {
                         reachedEnd = true;
                     } else {
-                        verticesToExplore.add(vertexToAdd);
+                        verticesToExplore.add(newVertex);
                     }
                 }
             }
         }
     }
 
+    private void addNewEdge(Vertex currVertex, Vertex newVertex) {
+        Edge newEdge = new Edge(currVertex, newVertex);
+        Ee.add(newEdge);
+        EeSize++;
+        LinkedList<Edge> newVertexPath = (LinkedList<Edge>) map.get(currVertex).clone();
+        newVertexPath.add(newEdge);
+        map.put(newVertex, newVertexPath);
+    }
+
     public ArrayList<Vertex> retrievePath(Vertex vj) {
         // TODO: retrieve the path to the vj(Goal Vertex)
         // Return a path as an array list
         ArrayList<Vertex> path = new ArrayList<Vertex>();
+        for (Edge currEdge: map.get(vj)) {
+            path.add(currEdge.vi);
+        }
+        path.add(map.get(vj).getLast().vj);
         return path;
     }
 
