@@ -1,5 +1,3 @@
-import sun.awt.image.ImageWatched;
-
 import java.util.*;
 import java.util.function.Function;
 
@@ -100,18 +98,18 @@ public class ExploredGraph {
         if (currVertex != vj) {
             boolean foundSolution = false;
             for (int currOperatorIndex = 0; currOperatorIndex < operators.size() && !foundSolution; currOperatorIndex++) {
-                Operator currOperator = operators.get(currOperatorIndex);
+                Operator currOperator = operators.get(currOperatorIndex); //Iterates through all of the possible movements
                 if (currOperator.getPrecondition().apply(currVertex)) {
-                    Vertex newVertex = currOperator.getTransition().apply(currVertex);
+                    Vertex newVertex = currOperator.getTransition().apply(currVertex); //Performs movement, if legal
                     if (!Ve.contains(newVertex)) {
                         addNewVertex(newVertex);
                         addNewEdge(currVertex, newVertex);
-                        foundSolution = dfsHelper(newVertex, vj);
+                        foundSolution = dfsHelper(newVertex, vj); //Recurses through the Vertices produced by operating on the current Vertex
                     }
                 }
             }
-            return foundSolution;
-        } else {
+            return foundSolution; //Returns true if the solution is found when operating on the current vertex or when
+        } else {                  //operating on the vertices produced by recursing through its descendants. Returns false otherwise
             return true;
         }
     }
@@ -131,16 +129,16 @@ public class ExploredGraph {
         while (!verticesToExplore.isEmpty() && !foundSolution) {
             Vertex currVertex = verticesToExplore.remove();
             for (int currOperatorIndex = 0; currOperatorIndex < operators.size() && !foundSolution; currOperatorIndex++) {
-                Operator currOperator = operators.get(currOperatorIndex);
-                if (currOperator.getPrecondition().apply(currVertex)) {
+                Operator currOperator = operators.get(currOperatorIndex); //Iterates through all possible moves for the current Vertex
+                if (currOperator.getPrecondition().apply(currVertex)) { //Checks if move is valid
                     Vertex newVertex = currOperator.getTransition().apply(currVertex);
                     if (!Ve.contains(newVertex)) {
                         addNewVertex(newVertex);
                         addNewEdge(currVertex, newVertex);
                         if (newVertex.equals(vj)) {
-                            foundSolution = true;
+                            foundSolution = true; //Stops iterating through operators and search queue if solution is found
                         } else {
-                            verticesToExplore.add(newVertex);
+                            verticesToExplore.add(newVertex); //Adds new Vertex to search queue
                         }
                     }
                 }
@@ -237,6 +235,9 @@ public class ExploredGraph {
         System.out.println("EeSize: " + eg.EeSize);
     }
 
+    /**
+     * Vertices are used to store a particular peg and disk configuration when playing the Towers of Hanoi game
+     */
     class Vertex {
         Stack<Integer>[] pegs; // Each vertex will hold a Towers-of-Hanoi state.
 
@@ -312,6 +313,9 @@ public class ExploredGraph {
         }
     }
 
+    /**
+     * Edges are used to represent relationships between two different disk configurations (Vertices)
+     */
     class Edge {
         public Vertex vi; //The starting disk configuration
         public Vertex vj; //The disk configuration after a move has been performed
@@ -350,7 +354,7 @@ public class ExploredGraph {
     }
 
     /**
-     * A
+     * Operators represent and perform possible movements to the disks and pegs (Vertices) in the Towers of Hanoi game
      */
     class Operator {
         private int i, j; //i = the peg you're taking a disk from. j = the peg you're putting the disk onto
