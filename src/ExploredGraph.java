@@ -43,12 +43,13 @@ public class ExploredGraph {
     private void setOperators() {
         // (i, j) = {(0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1)}
         operators = new ArrayList<Operator>();
-        operators.add(new Operator(0, 1));
-        operators.add(new Operator(0, 2));
-        operators.add(new Operator(1, 0));
-        operators.add(new Operator(1, 2));
-        operators.add(new Operator(2, 0));
-        operators.add(new Operator(2, 1));
+        for (int beginPeg = 0; beginPeg < NUMBER_OF_PEGS; beginPeg++) {
+            for (int endPeg = 0; endPeg < NUMBER_OF_PEGS; endPeg++) {
+                if (endPeg != beginPeg) {
+                    operators.add(new Operator(beginPeg, endPeg));
+                }
+            }
+        }
     }
 
     public int nvertices() {
@@ -103,13 +104,13 @@ public class ExploredGraph {
                 if (currOperator.getPrecondition().apply(currVertex)) {
                     Vertex newVertex = currOperator.getTransition().apply(currVertex);
                     if (!Ve.contains(newVertex)) {
+                        Ve.add(newVertex);
+                        VeSize++;
                         addNewEdge(currVertex, newVertex);
                         if (newVertex.equals(vj)) {
                             reachedEnd = true;
                         } else {
                             verticesToExplore.add(newVertex);
-                            Ve.add(newVertex);
-                            VeSize++;
                         }
                     }
                 }
@@ -121,7 +122,9 @@ public class ExploredGraph {
         Edge newEdge = new Edge(currVertex, newVertex);
         Ee.add(newEdge);
         EeSize++;
-        map.put(newVertex, new LinkedList<Edge>(Ee));
+        LinkedList<Edge> newVertexPath = (LinkedList<Edge>)map.get(currVertex).clone();
+        newVertexPath.add(newEdge);
+        map.put(newVertex, newVertexPath);
     }
 
     public ArrayList<Vertex> retrievePath(Vertex vj) {
@@ -150,13 +153,23 @@ public class ExploredGraph {
 
     public static void main(String[] args) {
         ExploredGraph eg = new ExploredGraph();
+//        Vertex v0 = eg.new Vertex("[[4,3,2,1],[],[]]");
+//        Vertex v1 = eg.new Vertex("[[],[],[4,3,2,1]]");
+//        eg.shortestPath(v0, v1);
+//        ArrayList<Vertex> answerPath = eg.retrievePath(v1);
+//        for (Vertex vertex: answerPath) {
+//            System.out.println(vertex);
+//        }
+
         Vertex v0 = eg.new Vertex("[[4,3,2,1],[],[]]");
-        Vertex v1 = eg.new Vertex("[[4,2],[3],[1]]");
+        Vertex v1 = eg.new Vertex("[[],[],[4,3,2,1]]");
         eg.dfs(v0, v1);
         ArrayList<Vertex> answerPath = eg.retrievePath(v1);
         for (Vertex vertex: answerPath) {
             System.out.println(vertex);
         }
+        System.out.println("VeSize: " + eg.VeSize);
+        System.out.println("EeSize: " + eg.EeSize);
     }
 
     class Vertex {
@@ -212,7 +225,7 @@ public class ExploredGraph {
         @Override
         public boolean equals(Object v) {
             if (v instanceof Vertex)
-                return hashCode() == ((Vertex) v).hashCode();
+                return hashCode() == v.hashCode();
             else
                 return false;
         }
@@ -239,14 +252,14 @@ public class ExploredGraph {
         @Override
         public boolean equals(Object e) {
             if (e instanceof Edge)
-                return hashCode() == ((Edge) e).hashCode();
+                return hashCode() == e.hashCode();
             else
                 return false;
         }
 
         @Override
         public int hashCode() {
-            return vi.hashCode() * vi.hashCode() + vj.hashCode();
+            return vi.hashCode() + vj.hashCode();
         }
     }
 
