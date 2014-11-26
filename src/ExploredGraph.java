@@ -93,10 +93,10 @@ public class ExploredGraph {
         addNewVertex(vi);
         verticesToExplore.add(vi);
         map.put(vi, new LinkedList<Edge>());
-        boolean reachedEnd = false;
-        while (!verticesToExplore.isEmpty() && !reachedEnd) {
+        boolean foundSolution = false;
+        while (!verticesToExplore.isEmpty() && !foundSolution) {
             Vertex currVertex = verticesToExplore.remove();
-            for (int currOperatorIndex = 0; currOperatorIndex < operators.size() && !reachedEnd; currOperatorIndex++) {
+            for (int currOperatorIndex = 0; currOperatorIndex < operators.size() && !foundSolution; currOperatorIndex++) {
                 Operator currOperator = operators.get(currOperatorIndex);
                 if (currOperator.getPrecondition().apply(currVertex)) {
                     Vertex newVertex = currOperator.getTransition().apply(currVertex);
@@ -104,7 +104,7 @@ public class ExploredGraph {
                         addNewVertex(newVertex);
                         addNewEdge(currVertex, newVertex);
                         if (newVertex.equals(vj)) {
-                            reachedEnd = true;
+                            foundSolution = true;
                         } else {
                             verticesToExplore.add(newVertex);
                         }
@@ -282,9 +282,8 @@ public class ExploredGraph {
                 public Boolean apply(Vertex vertex) {
                     Stack<Integer> currPeg = vertex.pegs[i];
                     if (!currPeg.empty()) {
-                        int diskMoving = currPeg.peek();
                         Stack<Integer> pegToPlaceOn = vertex.pegs[j];
-                        return pegToPlaceOn.empty() ? true : diskMoving < pegToPlaceOn.peek();
+                        return pegToPlaceOn.empty() || (currPeg.peek() < pegToPlaceOn.peek());
                     } else {
                         return false;
                     }
