@@ -62,8 +62,7 @@ public class ExploredGraph {
 
     public void dfs(Vertex vi, Vertex vj) {
         initialize();
-        Ve.add(vi);
-        VeSize++;
+        addNewVertex(vi);
         map.put(vi, new LinkedList<Edge>());
         dfsHelper(vi, vj);
     }
@@ -76,8 +75,7 @@ public class ExploredGraph {
                 if (currOperator.getPrecondition().apply(currVertex)) {
                     Vertex newVertex = currOperator.getTransition().apply(currVertex);
                     if (!Ve.contains(newVertex)) {
-                        Ve.add(newVertex);
-                        VeSize++;
+                        addNewVertex(newVertex);
                         addNewEdge(currVertex, newVertex);
                         foundSolution = dfsHelper(newVertex, vj);
                     }
@@ -92,8 +90,7 @@ public class ExploredGraph {
     public void bfs(Vertex vi, Vertex vj) {
         initialize();
         Queue<Vertex> verticesToExplore = new LinkedList<Vertex>();
-        Ve.add(vi);
-        VeSize++;
+        addNewVertex(vi);
         verticesToExplore.add(vi);
         map.put(vi, new LinkedList<Edge>());
         boolean reachedEnd = false;
@@ -104,8 +101,7 @@ public class ExploredGraph {
                 if (currOperator.getPrecondition().apply(currVertex)) {
                     Vertex newVertex = currOperator.getTransition().apply(currVertex);
                     if (!Ve.contains(newVertex)) {
-                        Ve.add(newVertex);
-                        VeSize++;
+                        addNewVertex(newVertex);
                         addNewEdge(currVertex, newVertex);
                         if (newVertex.equals(vj)) {
                             reachedEnd = true;
@@ -116,6 +112,11 @@ public class ExploredGraph {
                 }
             }
         }
+    }
+
+    private void addNewVertex(Vertex currVertex) {
+        Ve.add(currVertex);
+        VeSize++;
     }
 
     private void addNewEdge(Vertex currVertex, Vertex newVertex) {
@@ -129,8 +130,9 @@ public class ExploredGraph {
 
     public ArrayList<Vertex> retrievePath(Vertex vj) {
         ArrayList<Vertex> path = new ArrayList<Vertex>();
-        path.add(map.get(vj).getFirst().vi);
-        for (Edge currEdge: map.get(vj)) {
+        LinkedList<Edge> vjPath = map.get(vj);
+        path.add(vjPath.getFirst().vi);
+        for (Edge currEdge: vjPath) {
             path.add(currEdge.vj);
         }
         return path;
@@ -282,14 +284,10 @@ public class ExploredGraph {
                     if (!currPeg.empty()) {
                         int diskMoving = currPeg.peek();
                         Stack<Integer> pegToPlaceOn = vertex.pegs[j];
-                        if (pegToPlaceOn.empty()) {
-                            return true;
-                        } else {
-                            int topDisk = pegToPlaceOn.peek();
-                            return diskMoving < topDisk;
-                        }
+                        return pegToPlaceOn.empty() ? true : diskMoving < pegToPlaceOn.peek();
+                    } else {
+                        return false;
                     }
-                    return false;
                 }
             };
         }
