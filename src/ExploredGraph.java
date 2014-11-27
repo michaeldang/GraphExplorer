@@ -214,25 +214,6 @@ public class ExploredGraph {
 
     public static void main(String[] args) {
         ExploredGraph eg = new ExploredGraph();
-        Vertex v0 = eg.new Vertex("[[4,3,2,1],[],[]]");
-        Vertex v1 = eg.new Vertex("[[],[],[4,3,2,1]]");
-        eg.shortestPath(v0, v1);
-        ArrayList<Vertex> answerPath = eg.retrievePath(v1);
-        for (Vertex vertex: answerPath) {
-            System.out.println(vertex);
-        }
-        System.out.println("VeSize: " + eg.VeSize);
-        System.out.println("EeSize: " + eg.EeSize);
-
-        v0 = eg.new Vertex("[[4,3,2,1],[],[]]");
-        v1 = eg.new Vertex("[[],[],[4,3,2,1]]");
-        eg.dfs(v0, v1);
-        answerPath = eg.retrievePath(v1);
-        for (Vertex vertex: answerPath) {
-            System.out.println(vertex);
-        }
-        System.out.println("VeSize: " + eg.VeSize);
-        System.out.println("EeSize: " + eg.EeSize);
     }
 
     /**
